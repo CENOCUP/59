@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="pt-pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CenoCup - Champions Legends v34.0</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Montserrat:wght@300;400;700&family=Orbitron:wght@400;700&display=swap');
+
+        :root {
+            --ucl-blue: #001035;
+            --ucl-gold: #c3a361;
+            --ucl-silver: #e2e2e2;
+            --ucl-bronze: #cd7f32;
+            --ucl-star: #ffffff;
+            --danger: #ff4b2b;
+            --neon-blue: #00d4ff;
+        }
+
+        body {
+            background: var(--ucl-blue);
+            background-image: radial-gradient(circle at center, #002d72 0%, #001035 100%);
+            background-attachment: fixed;
+            color: #fff; font-family: 'Montserrat', sans-serif;
+            margin: 0; padding: 10px; display: flex; flex-direction: column; align-items: center;
+        }
+
+        .container { width: 100%; max-width: 1350px; }
+        header { text-align: center; padding: 25px 0; cursor: pointer; border-bottom: 2px solid var(--ucl-gold); margin-bottom: 25px; }
+        header h1 { font-family: 'Cinzel', serif; font-size: 2rem; letter-spacing: 2px; margin: 0; }
+
+        /* NAVEGAÇÃO */
+        .tabs { display: flex; gap: 5px; justify-content: center; margin-bottom: 25px; flex-wrap: wrap; }
+        .tab-btn {
+            background: rgba(255,255,255,0.05); color: var(--ucl-silver);
+            padding: 10px 15px; border-radius: 4px; border: 1px solid var(--ucl-gold);
+            cursor: pointer; font-family: 'Orbitron'; font-size: 0.6rem; transition: 0.3s;
+        }
+        .tab-btn.active { background: var(--ucl-gold); color: var(--ucl-blue); font-weight: bold; box-shadow: 0 0 15px var(--ucl-gold); }
+
+        /* TABELAS */
+        .table-wrapper { background: rgba(0, 16, 53, 0.9); backdrop-filter: blur(10px); border-radius: 4px; padding: 20px; border: 1px solid rgba(195,163,97,0.2); overflow-x: auto; margin-bottom: 25px; }
+        table { width: 100%; border-collapse: collapse; min-width: 900px; }
+        th { padding: 12px; color: var(--ucl-gold); font-size: 0.65rem; text-transform: uppercase; border-bottom: 2px solid var(--ucl-gold); font-family: 'Orbitron'; }
+        td { padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); text-align: center; }
+
+        /* ABA DE FORÇA / EVOLUÇÃO */
+        .power-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px; }
+        .power-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(195,163,97,0.2); border-radius: 8px; padding: 20px; }
+        .power-header { font-family: 'Orbitron'; color: var(--ucl-gold); font-size: 0.9rem; margin-bottom: 15px; border-bottom: 1px solid #333; padding-bottom: 5px; display: flex; justify-content: space-between; }
+        .power-stat-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.03); font-size: 0.8rem; }
+        .power-val { font-weight: bold; color: var(--neon-blue); }
+        .power-high { color: #00ff87; font-weight: bold; }
+        .power-low { color: var(--danger); }
+
+        /* HALL DA FAMA */
+        .podium { display: flex; justify-content: center; align-items: flex-end; gap: 15px; padding: 30px 0; }
+        .team-img { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 3px solid #444; background: #111; margin-bottom: 10px; }
+        .podium-1 .team-img { width: 130px; height: 130px; border-color: var(--ucl-gold); box-shadow: 0 0 25px rgba(195,163,97,0.3); }
+
+        /* ADMIN */
+        #admin { display: none; background: #000; padding: 20px; border-radius: 8px; border: 2px solid var(--ucl-gold); margin-bottom: 25px; }
+        input { background: #222; border: 1px solid #444; color: #fff; padding: 8px; border-radius: 4px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header onclick="openAdmin()">
+        <h1>CENO<span>CUP</span> CHAMPIONS <span>LEGENDS</span></h1>
+        <div style="font-family:'Orbitron'; font-size:0.5rem; color:var(--ucl-gold); letter-spacing:5px;">V34.0 POWER ANALYTICS</div>
+    </header>
+
+    <div id="admin">
+        <select id="admin-selector" onchange="renderEditor()" style="width:100%; margin-bottom:15px; padding:12px;"></select>
+        <div id="editor-container"></div>
+        <button onclick="addNewPlayer()" style="width:100%; margin:10px 0; background:transparent; border:1px solid var(--ucl-gold); color:var(--ucl-gold); padding:10px; cursor:pointer;">+ ADICIONAR TÉCNICO</button>
+        <div style="display:flex; gap:10px;">
+            <button onclick="saveAll()" style="flex:1; background:var(--ucl-gold); color:#000; border:none; padding:12px; font-weight:bold; cursor:pointer;">SALVAR ALTERAÇÕES</button>
+            <button onclick="closeSeason()" style="flex:1; background:var(--danger); color:#fff; border:none; padding:12px; cursor:pointer;">ENCERRAR ÉPOCA</button>
+        </div>
+        <div style="display:flex; gap:10px; margin-top:10px;">
+            <button onclick="exportDB()" style="flex:1; background:#333; color:#fff; border:none; padding:8px;">EXPORTAR BACKUP</button>
+            <button onclick="importDB()" style="flex:1; background:#333; color:#fff; border:none; padding:8px;">IMPORTAR BACKUP</button>
+        </div>
+    </div>
+
+    <div class="tabs">
+        <button id="t-tab" class="tab-btn active" onclick="switchTab('tabela')">🏆 Tabela</button>
+        <button id="p-tab" class="tab-btn" onclick="switchTab('poder')">⚡ Força/Época</button>
+        <button id="m-tab" class="tab-btn" onclick="switchTab('medalhas')">🏅 Medalhas</button>
+        <button id="r-tab" class="tab-btn" onclick="switchTab('ranking')">👑 Geral</button>
+        <button id="v-tab" class="tab-btn" onclick="switchTab('rivalidades')">⚔️ Rivais</button>
+        <button id="d-tab" class="tab-btn" onclick="switchTab('desempenho')">📊 Stats</button>
+        <button id="g-tab" class="tab-btn" onclick="switchTab('galeria')">🏛️ Hall</button>
+    </div>
+
+    <div id="view-tabela">
+        <select id="season-view-selector" onchange="changeSeasonView(this.value)" style="width:100%; margin-bottom:15px; padding:12px; background:#001035; color:white; border:1px solid var(--ucl-gold);"></select>
+        <div class="table-wrapper"><table id="table-main"></table></div>
+    </div>
+
+    <div id="view-poder" style="display:none">
+        <div class="power-grid" id="power-content"></div>
+    </div>
+
+    <div id="view-medalhas" style="display:none"><div class="table-wrapper"><table id="table-medalhas"></table></div></div>
+    <div id="view-ranking" style="display:none"><div class="table-wrapper"><table id="table-ranking"></table></div></div>
+    <div id="view-rivalidades" style="display:none"><div id="rival-content"></div></div>
+    <div id="view-desempenho" style="display:none"><div class="power-grid" id="stats-content"></div></div>
+    <div id="view-galeria" style="display:none; flex-direction:column;"></div>
+</div>
+
+<script>
+    const STORAGE_KEY = 'cenocup_master_v34';
+    let db = JSON.parse(localStorage.getItem(STORAGE_KEY)) || { atual: [], historico: [] };
+    let currentSeasonView = 'atual';
+
+    function openAdmin() { if(prompt("Pass:") === '123') document.getElementById('admin').style.display='block'; }
+
+    function switchTab(mode) {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        ['view-tabela', 'view-poder', 'view-medalhas', 'view-ranking', 'view-rivalidades', 'view-desempenho', 'view-galeria'].forEach(v => document.getElementById(v).style.display = 'none');
+        document.getElementById('view-' + mode).style.display = (mode === 'galeria') ? 'flex' : 'block';
+        document.getElementById(mode.charAt(0)+'-tab').classList.add('active');
+        window['render' + mode.charAt(0).toUpperCase() + mode.slice(1)]?.();
+    }
+
+    function calcF(gp, gc) { return parseFloat(((gp * 3.5) - (gc * 2.5)).toFixed(1)); }
+
+    function renderTabela() {
+        const sel = document.getElementById('season-view-selector');
+        sel.innerHTML = '<option value="atual">⭐ ÉPOCA ATUAL</option>';
+        db.historico.forEach((h, i) => sel.innerHTML += `<option value="${i}">📂 ${h.nome}</option>`);
+        sel.value = currentSeasonView;
+        let list = currentSeasonView === 'atual' ? [...db.atual] : [...db.historico[currentSeasonView].dados];
+        list.sort((a,b) => ((b.v*3)+b.e) - ((a.v*3)+a.e) || (b.gp-b.gc) - (a.gp-a.gc));
+        document.getElementById('table-main').innerHTML = `<thead><tr><th>#</th><th style="text-align:left">TÉCNICO</th><th>J</th><th>PTS</th><th>V</th><th>E</th><th>D</th><th>GP</th><th>GS</th><th>SG</th><th>FORÇA</th></tr></thead>
+        <tbody>${list.map((j, i) => `<tr><td style="color:var(--ucl-gold); font-family:Orbitron;">${i+1}º</td><td style="text-align:left"><b>${j.tecnico}</b></td><td>${j.v+j.e+(j.d||0)}</td><td style="font-weight:bold; color:var(--ucl-gold)">${(j.v*3)+j.e}</td><td>${j.v}</td><td>${j.e}</td><td>${j.d||0}</td><td>${j.gp}</td><td>${j.gc}</td><td>${j.gp-j.gc}</td><td>${calcF(j.gp,j.gc)}</td></tr>`).join('')}</tbody>`;
+    }
+
+    function renderPoder() {
+        let players = {};
+        const proc = (l, n) => l.forEach(j => {
+            if(!players[j.tecnico]) players[j.tecnico] = [];
+            players[j.tecnico].push({ epoca: n, forca: calcF(j.gp, j.gc) });
+        });
+        db.historico.forEach(h => proc(h.dados, h.nome)); proc(db.atual, "Atual");
+        
+        document.getElementById('power-content').innerHTML = Object.keys(players).map(p => {
+            let pData = players[p];
+            let maxP = Math.max(...pData.map(d => d.forca));
+            return `
+            <div class="power-card">
+                <div class="power-header"><span>${p}</span> <small>Peak: ${maxP}</small></div>
+                ${pData.map(d => `
+                    <div class="power-stat-row">
+                        <span>${d.epoca}</span>
+                        <span class="power-val ${d.forca === maxP ? 'power-high' : (d.forca < 0 ? 'power-low' : '')}">${d.forca}</span>
+                    </div>
+                `).join('')}
+            </div>`;
+        }).join('');
+    }
+
+    function renderMedalhas() {
+        let m = {};
+        db.historico.forEach(h => {
+            h.dados.forEach((j, idx) => {
+                if(!m[j.tecnico]) m[j.tecnico] = { t:j.tecnico, g:0, s:0, b:0, p:0 };
+                if(idx === 0) m[j.tecnico].g++;
+                else if(idx === 1) m[j.tecnico].s++;
+                else if(idx === 2) m[j.tecnico].b++;
+                if(idx === h.dados.length - 1) m[j.tecnico].p++;
+            });
+        });
+        let sorted = Object.values(m).sort((a,b) => b.g - a.g || b.s - a.s || b.b - a.b);
+        document.getElementById('table-medalhas').innerHTML = `<thead><tr><th>#</th><th style="text-align:left">TÉCNICO</th><th>🥇</th><th>🥈</th><th>🥉</th><th>💩</th></tr></thead>
+        <tbody>${sorted.map((j, i) => `<tr><td>${i+1}º</td><td style="text-align:left"><b>${j.t}</b></td><td>${j.g}</td><td>${j.s}</td><td>${j.b}</td><td>${j.p}</td></tr>`).join('')}</tbody>`;
+    }
+
+    function renderRanking() {
+        let s = {};
+        const proc = (l) => l.forEach(j => {
+            if(!s[j.tecnico]) s[j.tecnico] = { t:j.tecnico, part:0, pts:0, f:0 };
+            let x = s[j.tecnico]; x.part++; x.pts += (j.v*3)+j.e; x.f += calcF(j.gp, j.gc);
+        });
+        db.historico.forEach(h => proc(h.dados)); proc(db.atual);
+        let sorted = Object.values(s).sort((a,b) => b.pts - a.pts);
+        document.getElementById('table-ranking').innerHTML = `<thead><tr><th>#</th><th style="text-align:left">TÉCNICO</th><th>PART</th><th>PONTOS</th><th>FORÇA TOTAL</th></tr></thead>
+        <tbody>${sorted.map((j, i) => `<tr><td>${i+1}</td><td style="text-align:left"><b>${j.t}</b></td><td>${j.part}</td><td>${j.pts}</td><td style="color:var(--ucl-gold)">${j.f.toFixed(1)}</td></tr>`).join('')}</tbody>`;
+    }
+
+    function renderRivalidades() {
+        let s = {};
+        [...db.historico.flatMap(h => h.dados), ...db.atual].forEach(j => {
+            if(!s[j.tecnico]) s[j.tecnico] = { t:j.tecnico, f:0, c:0 };
+            s[j.tecnico].f += calcF(j.gp, j.gc); s[j.tecnico].c++;
+        });
+        let arr = Object.values(s).map(x => ({ t: x.t, m: x.f / x.c }));
+        let html = "", used = new Set();
+        arr.sort((a,b) => b.m - a.m).forEach(p => {
+            if(used.has(p.t)) return;
+            let riv = arr.filter(r => r.t !== p.t && !used.has(r.t)).sort((a,b) => Math.abs(a.m - p.m) - Math.abs(b.m - p.m))[0];
+            if(riv) {
+                used.add(p.t); used.add(riv.t);
+                html += `<div style="display:grid; grid-template-columns: 1fr auto 1fr; align-items:center; gap:20px; padding:15px; background:rgba(255,255,255,0.03); margin-bottom:8px; border-radius:8px; border:1px solid rgba(195,163,97,0.1);">
+                    <div style="text-align:right"><b>${p.t}</b><br><small>Power: ${p.m.toFixed(1)}</small></div>
+                    <div style="font-family:Cinzel; color:var(--ucl-gold); font-size:1.2rem;">VS</div>
+                    <div style="text-align:left"><b>${riv.t}</b><br><small>Power: ${riv.m.toFixed(1)}</small></div>
+                </div>`;
+            }
+        });
+        document.getElementById('rival-content').innerHTML = html;
+    }
+
+    function renderDesempenho() {
+        let all = [...db.historico.flatMap(h => h.dados), ...db.atual];
+        if(!all.length) return;
+        let map = {};
+        all.forEach(j => {
+            if(!map[j.tecnico]) map[j.tecnico] = { t:j.tecnico, gp:0, gc:0, e:0, j:0, foto:j.foto };
+            map[j.tecnico].gp += j.gp; map[j.tecnico].gc += j.gc; map[j.tecnico].e += j.e; map[j.tecnico].j += (j.v+j.e+(j.d||0));
+        });
+        let arr = Object.values(map).filter(x => x.j > 0);
+        const bA = [...arr].sort((a,b) => (b.gp/b.j) - (a.gp/a.j))[0];
+        const wD = [...arr].sort((a,b) => (b.gc/b.j) - (a.gc/a.j))[0];
+        document.getElementById('stats-content').innerHTML = `
+            <div class="power-card" style="text-align:center"><h3>M. ATAQUE</h3><b>${bA.t}</b><br>${(bA.gp/bA.j).toFixed(2)} G/J</div>
+            <div class="power-card" style="text-align:center; border-color:var(--danger)"><h3>P. DEFESA</h3><b>${wD.t}</b><br>${(wD.gc/wD.j).toFixed(2)} G/J</div>`;
+    }
+
+    function renderGaleria() {
+        const gal = document.getElementById('view-galeria');
+        gal.innerHTML = db.historico.slice().reverse().map(h => `
+            <div style="background:rgba(0,0,0,0.4); border:1px solid var(--ucl-gold); border-radius:12px; padding:25px; margin-bottom:30px; position:relative;">
+                <div style="position:absolute; top:-12px; left:20px; background:var(--ucl-gold); color:var(--ucl-blue); padding:4px 12px; font-family:Orbitron; font-size:0.6rem; font-weight:bold;">${h.nome.toUpperCase()}</div>
+                <div class="podium">
+                    <div class="podium-2"><img src="${h.dados[1]?h.dados[1].foto:''}" class="team-img" onerror="this.src='https://cdn-icons-png.flaticon.com/512/166/166120.png'"><br>🥈 ${h.dados[1]?h.dados[1].tecnico:'-'}</div>
+                    <div class="podium-1"><img src="${h.dados[0].foto}" class="team-img" onerror="this.src='https://cdn-icons-png.flaticon.com/512/166/166120.png'"><br>🏆 <b>${h.dados[0].tecnico}</b></div>
+                    <div class="podium-3"><img src="${h.dados[2]?h.dados[2].foto:''}" class="team-img" onerror="this.src='https://cdn-icons-png.flaticon.com/512/166/166120.png'"><br>🥉 ${h.dados[2]?h.dados[2].tecnico:'-'}</div>
+                </div>
+            </div>`).join('');
+    }
+
+    function renderEditor() {
+        const m = document.getElementById('admin-selector').value;
+        const target = m === 'atual' ? db.atual : db.historico[m].dados;
+        document.getElementById('editor-container').innerHTML = target.map((j, i) => `
+            <div class="edit-row">
+                <input style="width:110px" type="text" value="${j.tecnico}" onchange="upd('${m}',${i},'tecnico',this.value)">
+                V<input type="number" style="width:35px" value="${j.v}" onchange="upd('${m}',${i},'v',parseInt(this.value))">
+                E<input type="number" style="width:35px" value="${j.e}" onchange="upd('${m}',${i},'e',parseInt(this.value))">
+                D<input type="number" style="width:35px" value="${j.d||0}" onchange="upd('${m}',${i},'d',parseInt(this.value))">
+                GP<input type="number" style="width:40px" value="${j.gp}" onchange="upd('${m}',${i},'gp',parseInt(this.value))">
+                GS<input type="number" style="width:40px" value="${j.gc}" onchange="upd('${m}',${i},'gc',parseInt(this.value))">
+                <input style="flex:1" type="text" value="${j.foto||''}" placeholder="Foto" onchange="upd('${m}',${i},'foto',this.value)">
+                <button onclick="db.atual.splice(${i},1);renderEditor()">✕</button>
+            </div>`).join('');
+    }
+
+    function upd(m, idx, f, v) { if(m==='atual') db.atual[idx][f]=v; else db.historico[m].dados[idx][f]=v; }
+    function saveAll() { localStorage.setItem(STORAGE_KEY, JSON.stringify(db)); alert("Sincronizado!"); location.reload(); }
+    function addNewPlayer() { db.atual.push({tecnico:"Novo", v:0, e:0, d:0, gp:0, gc:0, foto:""}); renderEditor(); }
+    function changeSeasonView(v) { currentSeasonView = v; renderTabela(); }
+    function exportDB() { const a = document.createElement('a'); a.href = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(db)); a.download = `CenoCup_Backup.json`; a.click(); }
+    function importDB() { const inp = document.createElement('input'); inp.type = 'file'; inp.onchange = e => { const r = new FileReader(); r.readAsText(e.target.files[0]); r.onload = ev => { db = JSON.parse(ev.target.result); saveAll(); }; }; inp.click(); }
+    function closeSeason() {
+        let n = prompt("Nome da Época:");
+        if(n && db.atual.length) {
+            db.atual.sort((a,b) => ((b.v*3)+b.e) - ((a.v*3)+a.e));
+            db.historico.push({ nome: n, dados: JSON.parse(JSON.stringify(db.atual)) });
+            db.atual = db.atual.map(j => ({...j, v:0, e:0, d:0, gp:0, gc:0}));
+            saveAll();
+        }
+    }
+
+    const adminSel = document.getElementById('admin-selector');
+    adminSel.innerHTML = '<option value="atual">Temporada Atual</option>';
+    db.historico.forEach((h, i) => adminSel.innerHTML += `<option value="${i}">${h.nome}</option>`);
+    renderTabela();
+</script>
+</body>
+</html>
