@@ -3,200 +3,159 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CenoCup - Ultimate Analytics v43.0</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>CenoCup v44 - Safe Mode</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Montserrat:wght@300;400;700&family=Orbitron:wght@400;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Montserrat:wght@400;700&display=swap');
 
         :root {
             --ucl-blue: #001035;
             --ucl-gold: #c3a361;
-            --ucl-silver: #e2e2e2;
             --danger: #ff4b2b;
-            --neon-blue: #00d4ff;
-            --success: #00ff87;
         }
 
         body {
             background: var(--ucl-blue);
-            background-image: radial-gradient(circle at center, #002d72 0%, #001035 100%);
-            background-attachment: fixed;
             color: #fff; font-family: 'Montserrat', sans-serif;
             margin: 0; padding: 10px; display: flex; flex-direction: column; align-items: center;
         }
 
-        .container { width: 100%; max-width: 1350px; }
-        header { text-align: center; padding: 25px 0; cursor: pointer; border-bottom: 2px solid var(--ucl-gold); margin-bottom: 25px; }
-        header h1 { font-family: 'Cinzel', serif; font-size: 2rem; letter-spacing: 2px; margin: 0; }
-        header span { color: var(--ucl-gold); }
-
-        .tabs { display: flex; gap: 5px; justify-content: center; margin-bottom: 25px; flex-wrap: wrap; }
-        .tab-btn {
-            background: rgba(255,255,255,0.05); color: var(--ucl-silver);
-            padding: 10px 15px; border-radius: 4px; border: 1px solid var(--ucl-gold);
-            cursor: pointer; font-family: 'Orbitron'; font-size: 0.6rem; transition: 0.3s;
+        .container { width: 100%; max-width: 1200px; }
+        
+        /* Botão Admin Visível para Teste */
+        .admin-trigger {
+            background: transparent; border: 1px solid var(--ucl-gold);
+            color: var(--ucl-gold); padding: 5px 15px; cursor: pointer;
+            margin-bottom: 20px; font-family: 'Orbitron'; font-size: 0.7rem;
         }
-        .tab-btn.active { background: var(--ucl-gold); color: var(--ucl-blue); font-weight: bold; box-shadow: 0 0 15px var(--ucl-gold); }
 
-        .table-wrapper { background: rgba(0, 16, 53, 0.9); backdrop-filter: blur(10px); border-radius: 4px; padding: 20px; border: 1px solid rgba(195,163,97,0.2); overflow-x: auto; margin-bottom: 25px; }
-        table { width: 100%; border-collapse: collapse; min-width: 900px; }
-        th { padding: 12px; color: var(--ucl-gold); font-size: 0.65rem; text-transform: uppercase; border-bottom: 2px solid var(--ucl-gold); font-family: 'Orbitron'; }
-        td { padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); text-align: center; font-size: 0.85rem; }
+        #admin-panel { 
+            display: none; background: #000; padding: 20px; 
+            border: 2px solid var(--ucl-gold); margin-bottom: 20px; 
+        }
 
-        .power-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; }
-        .power-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(195,163,97,0.2); border-radius: 8px; padding: 20px; }
-        
-        #admin { display: none; background: #000; padding: 20px; border-radius: 8px; border: 2px solid var(--ucl-gold); margin-bottom: 25px; z-index: 999; }
-        .edit-row { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 10px; padding: 10px; background: #111; border-radius: 4px; border-left: 3px solid var(--ucl-gold); }
-        input, select { background: #222; border: 1px solid #444; color: #fff; padding: 8px; border-radius: 4px; }
-        
-        .badge-aprov { background: rgba(0, 255, 135, 0.1); color: var(--success); padding: 2px 5px; border-radius: 3px; font-weight: bold; }
+        .tabs { display: flex; gap: 5px; margin-bottom: 20px; flex-wrap: wrap; }
+        .tab-btn {
+            background: rgba(255,255,255,0.1); color: #fff;
+            padding: 10px; border: 1px solid var(--ucl-gold); cursor: pointer;
+        }
+        .tab-btn.active { background: var(--ucl-gold); color: #000; }
+
+        .table-wrapper { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 5px; overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; text-align: center; }
+        th { color: var(--ucl-gold); border-bottom: 2px solid var(--ucl-gold); padding: 10px; }
+        td { padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+
+        .edit-row { display: flex; gap: 5px; margin-bottom: 10px; flex-wrap: wrap; background: #111; padding: 10px; }
+        input { background: #222; color: #fff; border: 1px solid #444; padding: 5px; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <header onclick="openAdmin()">
-        <h1>CENO<span>CUP</span> ANALYTICS</h1>
-        <div style="font-family:'Orbitron'; font-size:0.5rem; color:var(--ucl-gold); letter-spacing:5px;">V43.0 PRO EDITION</div>
+    <header style="text-align: center; margin-bottom: 20px;">
+        <h1 style="font-family: 'Orbitron';">CENOCUP <span style="color:var(--ucl-gold)">V44</span></h1>
+        <button class="admin-trigger" onclick="toggleAdmin()">ACESSO ADMIN (SENHA: 123)</button>
     </header>
 
-    <div id="admin">
-        <h2 style="font-family:Orbitron; color:var(--ucl-gold); margin-top:0;">GERIR DADOS</h2>
-        <select id="admin-selector" onchange="renderEditor()" style="width:100%; margin-bottom:15px;"></select>
-        <div id="editor-container"></div>
-        <button onclick="addNewPlayer()" style="width:100%; margin:10px 0; background:transparent; border:1px solid var(--ucl-gold); color:var(--ucl-gold); padding:10px; cursor:pointer; font-weight:bold;">+ NOVO JOGADOR</button>
-        <div style="display:flex; gap:10px;">
-            <button onclick="saveAll()" style="flex:1; background:var(--ucl-gold); color:#000; border:none; padding:15px; font-weight:bold; cursor:pointer;">GUARDAR TUDO</button>
-            <button onclick="closeSeason()" style="flex:1; background:var(--danger); color:#fff; border:none; padding:15px; cursor:pointer;">FECHAR ÉPOCA</button>
+    <div id="admin-panel">
+        <h3 style="color:var(--ucl-gold)">PAINEL DE CONTROLO</h3>
+        <div style="margin-bottom: 15px;">
+            <button onclick="exportDB()">💾 EXPORTAR BACKUP</button>
+            <button onclick="importDB()">📂 IMPORTAR BACKUP</button>
         </div>
-        <div style="display:flex; gap:10px; margin-top:10px;">
-            <button onclick="exportDB()" style="flex:1; padding:10px;">💾 BACKUP</button>
-            <button onclick="importDB()" style="flex:1; padding:10px;">📂 IMPORTAR</button>
-        </div>
-        <button onclick="document.getElementById('admin').style.display='none'" style="width:100%; margin-top:10px; background:#444; color:white; border:none; padding:5px;">FECHAR PAINEL</button>
+        <div id="editor-content"></div>
+        <button onclick="addNewPlayer()" style="width:100%; margin: 10px 0;">+ ADICIONAR TÉCNICO</button>
+        <button onclick="saveAll()" style="width:100%; background:var(--ucl-gold); font-weight:bold; padding:10px;">SALVAR TUDO E RECARREGAR</button>
     </div>
 
     <div class="tabs">
-        <button id="t-tab" class="tab-btn active" onclick="switchTab('tabela')">🏆 Época</button>
-        <button id="r-tab" class="tab-btn" onclick="switchTab('ranking')">👑 Geral</button>
-        <button id="v-tab" class="tab-btn" onclick="switchTab('rivalidades')">⚔️ Comparativo</button>
-        <button id="d-tab" class="tab-btn" onclick="switchTab('desempenho')">📊 Stats</button>
-        <button id="m-tab" class="tab-btn" onclick="switchTab('medalhas')">🏅 Medalhas</button>
+        <button class="tab-btn active" onclick="switchTab('tabela')">TABELA</button>
+        <button class="tab-btn" onclick="switchTab('ranking')">RANKING GERAL</button>
     </div>
 
-    <div id="view-tabela">
-        <select id="season-view-selector" onchange="changeSeasonView(this.value)" style="width:100%; margin-bottom:15px;"></select>
+    <div id="view-tabela" class="view">
         <div class="table-wrapper"><table id="table-main"></table></div>
     </div>
 
-    <div id="view-ranking" style="display:none">
+    <div id="view-ranking" class="view" style="display:none">
         <div class="table-wrapper"><table id="table-ranking"></table></div>
-    </div>
-
-    <div id="view-rivalidades" style="display:none">
-        <div class="table-wrapper" style="text-align:center">
-            <div style="display:flex; gap:10px; justify-content:center; margin-bottom:20px;">
-                <select id="rival1" onchange="renderRivalidades()"></select>
-                <div style="align-self:center; font-family:Cinzel; color:var(--ucl-gold)">VS</div>
-                <select id="rival2" onchange="renderRivalidades()"></select>
-            </div>
-            <div style="max-width:450px; margin: 0 auto;"><canvas id="rivalChart"></canvas></div>
-        </div>
-    </div>
-
-    <div id="view-desempenho" style="display:none">
-        <div class="power-grid" id="stats-content"></div>
-    </div>
-
-    <div id="view-medalhas" style="display:none">
-        <div class="table-wrapper"><table id="table-medalhas"></table></div>
     </div>
 </div>
 
 <script>
-    const STORAGE_KEY = 'cenocup_v43_master';
+    const STORAGE_KEY = 'cenocup_v44_final';
     let db = JSON.parse(localStorage.getItem(STORAGE_KEY)) || { atual: [], historico: [] };
-    let currentSeasonView = 'atual';
-    let myChart = null;
 
-    // ADMIN
-    function openAdmin() {
-        const pass = prompt("Palavra-passe:");
-        if(pass === '123') {
-            document.getElementById('admin').style.display='block';
-            updateAdminSelector();
+    function toggleAdmin() {
+        if(prompt("Senha:") === '123') {
+            document.getElementById('admin-panel').style.display = 'block';
             renderEditor();
         }
     }
 
-    function updateAdminSelector() {
-        const sel = document.getElementById('admin-selector');
-        sel.innerHTML = '<option value="atual">Temporada Atual</option>';
-        db.historico.forEach((h, i) => sel.innerHTML += `<option value="${i}">${h.nome}</option>`);
-    }
-
-    // NAVEGAÇÃO
     function switchTab(mode) {
+        document.querySelectorAll('.view').forEach(v => v.style.display = 'none');
         document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        ['view-tabela', 'view-ranking', 'view-rivalidades', 'view-desempenho', 'view-medalhas'].forEach(v => document.getElementById(v).style.display = 'none');
         document.getElementById('view-' + mode).style.display = 'block';
-        const btn = document.getElementById(mode.charAt(0)+'-tab');
-        if(btn) btn.classList.add('active');
-
-        if(mode === 'rivalidades') {
-            setTimeout(renderRivalidades, 100);
-        } else if(mode === 'desempenho') {
-            renderDesempenho();
-        } else if(mode === 'ranking') {
-            renderRanking();
-        } else if(mode === 'medalhas') {
-            renderMedalhas();
-        } else {
-            renderTabela();
-        }
+        event.target.classList.add('active');
+        if(mode === 'ranking') renderRanking(); else renderTabela();
     }
-
-    // CÁLCULOS
-    const calcF = (gp, gc) => parseFloat(((gp * 3.5) - (gc * 2.5)).toFixed(1));
 
     function renderTabela() {
-        const sel = document.getElementById('season-view-selector');
-        sel.innerHTML = '<option value="atual">⭐ ÉPOCA ATUAL</option>';
-        db.historico.forEach((h, i) => sel.innerHTML += `<option value="${i}">📂 ${h.nome}</option>`);
-        sel.value = currentSeasonView;
-
-        let list = currentSeasonView === 'atual' ? [...db.atual] : [...db.historico[currentSeasonView].dados];
-        list.sort((a,b) => ((b.v*3)+b.e) - ((a.v*3)+a.e) || (b.gp-b.gc) - (a.gp-a.gc));
-        
-        document.getElementById('table-main').innerHTML = `<thead><tr><th>#</th><th style="text-align:left">TÉCNICO</th><th>J</th><th>V</th><th>E</th><th>D</th><th>GP</th><th>GS</th><th>SG</th><th>PTS</th></tr></thead>
-        <tbody>${list.map((j, i) => `<tr><td>${i+1}º</td><td style="text-align:left"><b>${j.tecnico}</b></td><td>${j.v+j.e+(j.d||0)}</td><td>${j.v}</td><td>${j.e}</td><td>${j.d||0}</td><td>${j.gp}</td><td>${j.gc}</td><td>${j.gp-j.gc}</td><td style="color:var(--ucl-gold); font-weight:bold">${(j.v*3)+j.e}</td></tr>`).join('')}</tbody>`;
+        let list = [...db.atual].sort((a,b) => ((b.v*3)+b.e) - ((a.v*3)+a.e));
+        document.getElementById('table-main').innerHTML = `
+            <thead><tr><th>Técnico</th><th>PTS</th><th>V</th><th>E</th><th>D</th><th>GP</th><th>GS</th></tr></thead>
+            <tbody>${list.map(j => `<tr><td>${j.tecnico}</td><td>${(j.v*3)+j.e}</td><td>${j.v}</td><td>${j.e}</td><td>${j.d||0}</td><td>${j.gp}</td><td>${j.gc}</td></tr>`).join('')}</tbody>`;
     }
 
     function renderRanking() {
         let s = {};
         const proc = (l) => l.forEach(j => {
-            if(!s[j.tecnico]) s[j.tecnico] = { t:j.tecnico, part:0, j:0, v:0, e:0, d:0, gf:0, gs:0, pts:0 };
-            let x = s[j.tecnico]; x.part++; x.j += (j.v+j.e+(j.d||0)); x.v += j.v; x.e += j.e; x.d += (j.d||0); x.gf += j.gp; x.gs += j.gc; x.pts += (j.v*3)+j.e;
+            if(!s[j.tecnico]) s[j.tecnico] = { t:j.tecnico, pts:0, j:0 };
+            s[j.tecnico].pts += (j.v*3)+j.e;
+            s[j.tecnico].j += (j.v+j.e+(j.d||0));
         });
         db.historico.forEach(h => proc(h.dados)); proc(db.atual);
-        let sorted = Object.values(s).sort((a,b) => b.pts - a.pts || calcF(b.gf, b.gs) - calcF(a.gf, a.gs));
-
-        document.getElementById('table-ranking').innerHTML = `<thead><tr><th>POS</th><th style="text-align:left">TÉCNICO</th><th>PART</th><th>V</th><th>E</th><th>D</th><th>APROV</th><th>FORÇA</th><th>PTS</th></tr></thead>
-        <tbody>${sorted.map((j, i) => `<tr><td>${i+1}º</td><td style="text-align:left"><b>${j.t}</b></td><td>${j.part}</td><td>${j.v}</td><td>${j.e}</td><td>${j.d}</td><td><span class="badge-aprov">${j.j>0?((j.pts/(j.j*3))*100).toFixed(1):0}%</span></td><td>${calcF(j.gf,j.gs)}</td><td style="color:var(--ucl-gold); font-weight:bold">${j.pts}</td></tr>`).join('')}</tbody>`;
+        let sorted = Object.values(s).sort((a,b) => b.pts - a.pts);
+        document.getElementById('table-ranking').innerHTML = `
+            <thead><tr><th>Pos</th><th>Técnico</th><th>Jogos</th><th>Pts Totais</th></tr></thead>
+            <tbody>${sorted.map((j, i) => `<tr><td>${i+1}º</td><td>${j.t}</td><td>${j.j}</td><td>${j.pts}</td></tr>`).join('')}</tbody>`;
     }
 
-    function renderRivalidades() {
-        let all = [...db.historico.flatMap(h => h.dados), ...db.atual];
-        if(!all.length) return;
-        let map = {};
-        all.forEach(j => {
-            if(!map[j.tecnico]) map[j.tecnico] = { t:j.tecnico, gp:0, gc:0, v:0, e:0, j:0, pts:0, part:1 };
-            else map[j.tecnico].part++;
-            map[j.tecnico].gp += j.gp; map[j.tecnico].gc += j.gc; map[j.tecnico].v += j.v; map[j.tecnico].e += j.e;
-            map[j.tecnico].j += (j.v+j.e+(j.d||0)); map[j.tecnico].pts += (j.v*3)+j.e;
-        });
+    function renderEditor() {
+        document.getElementById('editor-content').innerHTML = db.atual.map((j, i) => `
+            <div class="edit-row">
+                <input type="text" value="${j.tecnico}" onchange="db.atual[${i}].tecnico=this.value">
+                V:<input type="number" value="${j.v}" onchange="db.atual[${i}].v=parseInt(this.value)" style="width:40px">
+                E:<input type="number" value="${j.e}" onchange="db.atual[${i}].e=parseInt(this.value)" style="width:40px">
+                D:<input type="number" value="${j.d||0}" onchange="db.atual[${i}].d=parseInt(this.value)" style="width:40px">
+                GP:<input type="number" value="${j.gp}" onchange="db.atual[${i}].gp=parseInt(this.value)" style="width:40px">
+                GS:<input type="number" value="${j.gc}" onchange="db.atual[${i}].gc=parseInt(this.value)" style="width:40px">
+            </div>`).join('');
+    }
 
-        const técnicos = Object.keys(map);
-        const s1 = document.getElementById('rival1');
-        const s2
+    function addNewPlayer() { db.atual.push({tecnico:"Novo", v:0, e:0, d:0, gp:0, gc:0}); renderEditor(); }
+    function saveAll() { localStorage.setItem(STORAGE_KEY, JSON.stringify(db)); location.reload(); }
+
+    function exportDB() {
+        const blob = new Blob([JSON.stringify(db)], {type: "application/json"});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url; a.download = "cenocup_backup.json"; a.click();
+    }
+
+    function importDB() {
+        const inp = document.createElement('input');
+        inp.type = 'file';
+        inp.onchange = e => {
+            const reader = new FileReader();
+            reader.onload = ev => { db = JSON.parse(ev.target.result); saveAll(); };
+            reader.readAsText(e.target.files[0]);
+        };
+        inp.click();
+    }
+
+    renderTabela();
+</script>
+</body>
+</html>
