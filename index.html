@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CenoCup Elite v48</title>
+    <title>CenoCup Pro v49</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Orbitron:wght@400;700&family=Montserrat:wght@300;400;700&display=swap');
@@ -44,22 +44,22 @@
         th { font-family: 'Orbitron'; color: var(--ucl-gold); font-size: 0.7rem; padding: 12px; border-bottom: 2px solid var(--ucl-gold); }
         td { padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); text-align: center; }
 
-        /* Hall da Fama Estilo */
-        .hall-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
-        .epoch-card { background: rgba(0,0,0,0.4); border: 1px solid var(--ucl-gold); border-radius: 10px; padding: 15px; }
-        .podium { display: flex; justify-content: space-around; align-items: flex-end; margin: 15px 0; height: 120px; }
-        .podium-spot { text-align: center; width: 30%; }
-        .avatar { width: 50px; height: 50px; border-radius: 50%; border: 2px solid #fff; object-fit: cover; background: #222; }
-        .gold .avatar { border-color: gold; width: 65px; height: 65px; box-shadow: 0 0 10px gold; }
-        .rebaixado-box { background: rgba(255,0,0,0.1); border: 1px dashed var(--danger); padding: 5px; margin-top: 10px; font-size: 0.8rem; border-radius: 5px; }
+        /* Hall da Fama Style */
+        .hall-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
+        .epoch-card { background: rgba(0,0,0,0.4); border: 1px solid var(--ucl-gold); border-radius: 10px; padding: 15px; position: relative; }
+        .podium { display: flex; justify-content: space-around; align-items: flex-end; margin-top: 20px; height: 130px; }
+        .podium-spot { text-align: center; width: 30%; font-size: 0.7rem; }
+        .avatar { width: 45px; height: 45px; border-radius: 50%; border: 2px solid #fff; object-fit: cover; background: #222; }
+        .gold .avatar { width: 65px; height: 65px; border-color: gold; box-shadow: 0 0 15px gold; }
+        .rebaixado-tag { background: rgba(255,0,0,0.2); color: #ff9999; border: 1px solid var(--danger); padding: 5px; margin-top: 15px; font-size: 0.7rem; border-radius: 4px; text-align: center; }
 
         #admin-panel {
             display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
             width: 95%; max-width: 900px; max-height: 85vh; overflow-y: auto;
-            background: #050505; border: 2px solid var(--ucl-gold); z-index: 1000; padding: 20px;
+            background: #050505; border: 2px solid var(--ucl-gold); z-index: 1000; padding: 20px; box-shadow: 0 0 50px #000;
         }
-        .edit-row { display: grid; grid-template-columns: 1.5fr 2fr repeat(5, 1fr) 40px; gap: 5px; margin-bottom: 10px; background: #111; padding: 8px; }
-        input, select { background: #222; border: 1px solid #444; color: #fff; padding: 5px; border-radius: 4px; font-size: 0.8rem; }
+        .edit-row { display: grid; grid-template-columns: 1.5fr 2fr repeat(5, 1fr) 40px; gap: 5px; margin-bottom: 10px; background: #111; padding: 8px; border-radius: 5px; }
+        input { background: #222; border: 1px solid #444; color: #fff; padding: 6px; border-radius: 4px; width: 100%; box-sizing: border-box; }
         
         .btn-action { padding: 10px; cursor: pointer; border: none; font-family: 'Orbitron'; font-size: 0.7rem; font-weight: bold; border-radius: 4px; }
         .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 999; }
@@ -72,19 +72,19 @@
 <div class="container">
     <header onclick="askAdmin()">
         <h1>CENO<span>CUP</span></h1>
-        <div style="font-family:Orbitron; font-size:0.6rem; color:var(--ucl-gold);">HALL OF FAME EDITION V48.0</div>
+        <div style="font-family:Orbitron; font-size:0.6rem; color:var(--ucl-gold);">ALL-IN-ONE ANALYTICS V49.0</div>
     </header>
 
     <div id="admin-panel">
-        <h2 style="font-family:Orbitron; color:var(--ucl-gold);">GESTÃO DE ELITE</h2>
+        <h2 style="font-family:Orbitron; color:var(--ucl-gold);">ADMINISTRAÇÃO</h2>
         <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap:10px; margin-bottom:20px;">
-            <button class="btn-action" style="background:var(--ucl-gold); color:#000;" onclick="saveAll()">GUARDAR</button>
-            <button class="btn-action" style="background:var(--danger); color:#fff;" onclick="closeSeason()">🔒 FECHAR ÉPOCA</button>
-            <button class="btn-action" style="background:#333; color:#fff;" onclick="exportDB()">💾 BACKUP</button>
+            <button class="btn-action" style="background:var(--ucl-gold); color:#000;" onclick="saveAll()">SALVAR TUDO</button>
+            <button class="btn-action" style="background:var(--danger); color:#fff;" onclick="closeSeason()">🔒 ENCERRAR ÉPOCA</button>
+            <button class="btn-action" style="background:#333; color:#fff;" onclick="exportDB()">💾 EXPORTAR</button>
             <button class="btn-action" style="background:#333; color:#fff;" onclick="importDB()">📂 IMPORTAR</button>
         </div>
         <div id="editor-rows"></div>
-        <button class="btn-action" style="width:100%; margin-top:10px; background:transparent; border:1px solid var(--ucl-gold); color:var(--ucl-gold)" onclick="addNewPlayer()">+ ADICIONAR TÉCNICO</button>
+        <button class="btn-action" style="width:100%; margin-top:10px; background:transparent; border:1px solid var(--ucl-gold); color:var(--ucl-gold)" onclick="addNewPlayer()">+ NOVO TÉCNICO</button>
     </div>
 
     <div class="tabs">
@@ -96,8 +96,16 @@
     </div>
 
     <div id="view-tabela" class="view card">
-        <select id="season-selector" onchange="renderTabela(this.value)" style="width: 100%; margin-bottom: 15px; padding: 10px;"></select>
-        <div class="table-wrapper"><table><thead><tr><th>FOTO</th><th>TÉCNICO</th><th>J</th><th>V</th><th>E</th><th>D</th><th>GP</th><th>GS</th><th>SG</th><th>PTS</th></tr></thead><tbody id="body-tabela"></tbody></table></div>
+        <div style="margin-bottom:15px;">
+            <label style="font-family:Orbitron; font-size:0.7rem; color:var(--ucl-gold)">SELECIONAR ÉPOCA:</label>
+            <select id="season-selector" onchange="renderTabela(this.value)" style="width:100%; padding:10px; background:#111; color:#fff; border:1px solid #444; border-radius:5px; margin-top:5px;"></select>
+        </div>
+        <div class="table-wrapper">
+            <table>
+                <thead><tr><th>FOTO</th><th>TÉCNICO</th><th>J</th><th>V</th><th>E</th><th>D</th><th>GP</th><th>GS</th><th>SG</th><th>PTS</th></tr></thead>
+                <tbody id="body-tabela"></tbody>
+            </table>
+        </div>
     </div>
 
     <div id="view-hall" class="view" style="display:none">
@@ -113,18 +121,21 @@
     </div>
 
     <div id="view-regras" class="view card" style="display:none">
-        <h2 style="font-family:Orbitron; color:var(--ucl-gold);">SISTEMA CPI (CENO-POWER)</h2>
-        <p>V: +10 | GP: +2 | GS: -3 | SG: +5</p>
-        <p>Patentes: Mundial (>500), Elite (>300), Pro (>100), Amador</p>
+        <h2 style="font-family:Orbitron; color:var(--ucl-gold);">REGRAS DO SISTEMA</h2>
+        <div class="stats-grid">
+            <div class="mini-card"><h4>FORÇA (CPI)</h4>V: +10 | GP: +2 | GS: -3 | Saldo: +5</div>
+            <div class="mini-card"><h4>PATENTES</h4>Mundial >500 | Elite >300 | Pro >100</div>
+        </div>
     </div>
 </div>
 
 <script>
-    const KEY = 'cenocup_v48_final';
+    // CHAVE ÚNICA PARA NUNCA MAIS MUDAR
+    const KEY = 'cenocup_master_database';
     let db = JSON.parse(localStorage.getItem(KEY)) || { atual: [], historico: [] };
 
     function askAdmin() {
-        if(prompt("Senha:") === '123') {
+        if(prompt("Acesso:") === '123') {
             document.getElementById('admin-panel').style.display = 'block';
             document.getElementById('overlay').style.display = 'block';
             renderEditor();
@@ -135,14 +146,14 @@
     function renderEditor() {
         document.getElementById('editor-rows').innerHTML = db.atual.map((j, i) => `
             <div class="edit-row">
-                <input type="text" value="${j.tecnico}" onchange="db.atual[${i}].tecnico=this.value" placeholder="Nome">
-                <input type="text" value="${j.foto||''}" onchange="db.atual[${i}].foto=this.value" placeholder="URL Foto">
+                <input type="text" value="${j.tecnico}" onchange="db.atual[${i}].tecnico=this.value" placeholder="Técnico">
+                <input type="text" value="${j.foto||''}" onchange="db.atual[${i}].foto=this.value" placeholder="Link Foto">
                 <input type="number" value="${j.v}" onchange="db.atual[${i}].v=parseInt(this.value)">
                 <input type="number" value="${j.e}" onchange="db.atual[${i}].e=parseInt(this.value)">
                 <input type="number" value="${j.d||0}" onchange="db.atual[${i}].d=parseInt(this.value)">
                 <input type="number" value="${j.gp}" onchange="db.atual[${i}].gp=parseInt(this.value)">
                 <input type="number" value="${j.gc}" onchange="db.atual[${i}].gc=parseInt(this.value)">
-                <button onclick="db.atual.splice(${i},1); renderEditor()" style="color:red; background:none; border:none;">✕</button>
+                <button onclick="db.atual.splice(${i},1); renderEditor()" style="color:red; background:none; border:none; cursor:pointer">✕</button>
             </div>`).join('');
     }
 
@@ -154,14 +165,14 @@
         document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
         document.getElementById('view-' + view).style.display = (view==='hall' || view==='stats') ? 'grid' : 'block';
         document.getElementById('tab-' + view).classList.add('active');
-        if(view === 'tabela') updateSeasonSelector();
+        if(view === 'tabela') initSelector();
         if(view === 'hall') renderHall();
         if(view === 'ranking') renderRanking();
     }
 
-    function updateSeasonSelector() {
+    function initSelector() {
         const sel = document.getElementById('season-selector');
-        let options = `<option value="atual">Época Atual (Em Curso)</option>`;
+        let options = `<option value="atual">Época Atual</option>`;
         db.historico.forEach((h, i) => options += `<option value="${i}">${h.nome}</option>`);
         sel.innerHTML = options;
         renderTabela('atual');
@@ -182,26 +193,24 @@
 
     function renderHall() {
         const container = document.getElementById('hall-content');
-        if(!db.historico.length) return container.innerHTML = "<p>Nenhuma época encerrada ainda.</p>";
-        
+        if(!db.historico.length) return container.innerHTML = "<p>Sem épocas no histórico.</p>";
         container.innerHTML = db.historico.map(h => {
             let s = [...h.dados].sort((a,b) => ((b.v*3)+b.e) - ((a.v*3)+a.e) || (b.gp-b.gc) - (a.gp-a.gc));
-            let ouro = s[0], prata = s[1], bronze = s[2], rebaixado = s[s.length-1];
             return `
             <div class="epoch-card">
-                <h3 style="color:var(--ucl-gold); margin:0; font-family:Orbitron; font-size:0.9rem">${h.nome}</h3>
+                <h3 style="font-family:Orbitron; color:var(--ucl-gold); font-size:0.8rem; margin:0">${h.nome}</h3>
                 <div class="podium">
-                    <div class="podium-spot"><img src="${prata?.foto||''}" class="avatar"><br><small>2º ${prata?.tecnico||'--'}</small></div>
-                    <div class="podium-spot gold"><img src="${ouro?.foto||''}" class="avatar"><br><b>1º ${ouro?.tecnico||'--'}</b></div>
-                    <div class="podium-spot"><img src="${bronze?.foto||''}" class="avatar"><br><small>3º ${bronze?.tecnico||'--'}</small></div>
+                    <div class="podium-spot"><img src="${s[1]?.foto||''}" class="avatar"><br>2º ${s[1]?.tecnico||'-'}</div>
+                    <div class="podium-spot gold"><img src="${s[0]?.foto||''}" class="avatar"><br><b>1º ${s[0]?.tecnico||'-'}</b></div>
+                    <div class="podium-spot"><img src="${s[2]?.foto||''}" class="avatar"><br>3º ${s[2]?.tecnico||'-'}</div>
                 </div>
-                <div class="rebaixado-box">💀 Rebaixado: ${rebaixado?.tecnico || '--'}</div>
+                <div class="rebaixado-tag">⚠️ Rebaixado: ${s[s.length-1]?.tecnico || '-'}</div>
             </div>`;
         }).join('');
     }
 
     function closeSeason() {
-        let n = prompt("Nome da Época (ex: 1ª Temporada):");
+        let n = prompt("Nome da Época:");
         if(n && db.atual.length) {
             db.historico.push({ nome: n, dados: JSON.parse(JSON.stringify(db.atual)) });
             db.atual = db.atual.map(j => ({tecnico:j.tecnico, foto:j.foto, v:0, e:0, d:0, gp:0, gc:0}));
@@ -213,7 +222,6 @@
         const blob = new Blob([JSON.stringify(db)], {type: "application/json"});
         const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `cenocup_backup.json`; a.click();
     }
-
     function importDB() {
         const inp = document.createElement('input'); inp.type = 'file';
         inp.onchange = e => {
@@ -224,8 +232,7 @@
         inp.click();
     }
 
-    // Inicialização
-    updateSeasonSelector();
+    initSelector();
 </script>
 </body>
 </html>
